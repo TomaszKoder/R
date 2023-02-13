@@ -52,17 +52,31 @@ srv <- function(input, output){
   
   d = reactive({
     starwars_data %>% 
-      filter(species == input$species)
+      filter(species %in% input$species, hair_color1 %in% input$hair)
   })
   
+
+  
   output$plot <- renderPlotly({
-  plot_ly(d() %>%
+    
+  plot_ly(d()) %>%
     add_markers(
-      x = ~homeworld,
-      y = ~height
-    )
+      x = ~height,
+      y = ~homeworld,
+      color = ~sex,
+      name = ~sex,
+      colors = 'Set2'
+    ) %>%
+  layout(
+    xaxis = list(title = 'Wzrost [cm]'),
+    yaxis = list(title = 'Rodzinna planeta')
   )
   })
+  
+  output$table <- renderDataTable({
+    datatable(d())
+  }
+  )
   
 }
 
